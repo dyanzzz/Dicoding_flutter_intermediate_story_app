@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/localization/app_localizations.dart';
@@ -109,6 +110,18 @@ class _StoryDetailPageState extends State<StoryDetailPage> {
                   ),
                 ),
               ),
+      floatingActionButton:
+          (story?.lat != null && story?.lon != null) ||
+                  (story?.lat != 0.0 && story?.lon != 0.0) ||
+                  (story?.lat != 1 && story?.lon != 1)
+              ? FloatingActionButton(
+                onPressed: () {
+                  context.push('/detail/${story?.id}/map');
+                },
+                tooltip: lang.translate('look_map'),
+                child: const Icon(Icons.map),
+              )
+              : null,
     );
   }
 }

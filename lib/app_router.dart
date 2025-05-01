@@ -1,4 +1,5 @@
 import 'package:dicoding_story_flutter/screens/error_screen.dart';
+import 'package:dicoding_story_flutter/screens/story/story_detail_location_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -70,6 +71,17 @@ class AppRouter {
                 (context, state) => MaterialPage(
                   key: state.pageKey,
                   child: StoryDetailPage(storyId: state.pathParameters['id']!),
+                ),
+            routes: [],
+          ),
+          GoRoute(
+            path: 'detail/:id/map',
+            pageBuilder:
+                (context, state) => MaterialPage(
+                  key: state.pageKey,
+                  child: StoryDetailLocationPage(
+                    storyId: state.pathParameters['id']!,
+                  ),
                 ),
           ),
           GoRoute(

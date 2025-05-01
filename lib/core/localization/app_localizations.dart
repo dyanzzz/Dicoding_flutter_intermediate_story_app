@@ -53,6 +53,11 @@ class AppLocalizations {
             'gallery': 'Gallery',
             'story_detail': 'Detail Story',
             'upload': 'Post',
+            'look_map': 'Look at the map',
+            'story_location': 'Story Location',
+            'my_position': 'My Position',
+            'goto_my_position': 'Go to my location',
+            'goto_story_location': 'Go to story location',
           },
           'id': {
             'welcome': 'Selamat Datang',
@@ -86,6 +91,11 @@ class AppLocalizations {
             'gallery': 'Media',
             'story_detail': 'Detail Cerita',
             'upload': 'Posting',
+            'look_map': 'Lihat peta',
+            'story_location': 'Lokasi Story',
+            'my_position': 'Posisi Saya',
+            'goto_my_position': 'Ke lokasi saya',
+            'goto_story_location': 'Ke lokasi pembuat cerita',
           },
         }[locale.languageCode];
 
