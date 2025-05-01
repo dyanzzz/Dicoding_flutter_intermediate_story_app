@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     final token = await authProvider.getToken();
 
     if (token != null) {
-      await storyProvider.fetchStories(token: token, context: context);
+      await storyProvider.fetchStories(token: token);
     }
   }
 
@@ -58,24 +58,38 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body:
-          storyProvider.isLoading
+          storyProvider.isLoading && storyProvider.hasMore
               ? const Center(child: CircularProgressIndicator())
               : storyProvider.errorMessage.isNotEmpty
               ? Center(child: Text(storyProvider.errorMessage))
               : RefreshIndicator(
-                onRefresh: _loadStories,
+                onRefresh: () async {
+                  storyProvider.refreshStories();
+                },
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
                     return GridView.builder(
+                      controller: storyProvider.scrollController,
                       addAutomaticKeepAlives: true,
                       addRepaintBoundaries: true,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: crossAxisCount,
                         childAspectRatio: 0.7,
                       ),
-                      itemCount: storyProvider.stories.length,
+                      itemCount:
+                          storyProvider.stories.length +
+                          (storyProvider.pageItems != null ? 1 : 0),
                       itemBuilder: (context, index) {
+                        if (index == storyProvider.stories.length) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+
                         final story = storyProvider.stories[index];
                         return Card(
                           elevation: 3,
@@ -128,6 +142,8 @@ class _HomePageState extends State<HomePage> {
                                                 context,
                                               ).colorScheme.primary,
                                         ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
                                   ),

@@ -146,7 +146,6 @@ class _StoryFormPageState extends State<StoryFormPage> {
                                       uploadProvider.reset();
                                       await storyProvider.fetchStories(
                                         token: token,
-                                        context: context,
                                       );
                                     }
                                   }

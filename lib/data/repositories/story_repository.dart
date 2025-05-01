@@ -7,9 +7,13 @@ import '../model/story_model.dart';
 class StoryRepository {
   final String baseUrl = 'https://story-api.dicoding.dev/v1';
 
-  Future<List<StoryModel>> getStories(String token) async {
+  Future<List<StoryModel>> getStories([
+    String token = "",
+    int page = 1,
+    int size = 10,
+  ]) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/stories'),
+      Uri.parse('$baseUrl/stories?page=$page&size=$size&location=1'),
       headers: {'Authorization': 'Bearer $token'},
     );
 

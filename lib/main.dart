@@ -23,7 +23,16 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => StoryProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, StoryProvider>(
+          create:
+              (context) => StoryProvider(
+                Provider.of<AuthProvider>(context, listen: false),
+              ),
+          update: (context, authProvider, storyProvider) {
+            //storyProvider?.updateAuth(authProvider);
+            return storyProvider ?? StoryProvider(authProvider);
+          },
+        ),
         ChangeNotifierProvider(create: (_) => UploadProvider()),
       ],
       child: Consumer<LocaleProvider>(
