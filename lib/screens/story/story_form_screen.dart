@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ class StoryFormPage extends StatefulWidget {
 class _StoryFormPageState extends State<StoryFormPage> {
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  Position? currentPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -138,15 +140,15 @@ class _StoryFormPageState extends State<StoryFormPage> {
                                           token: token,
                                           description:
                                               _descriptionController.text,
+                                          lat: currentPosition?.latitude,
+                                          lon: currentPosition?.longitude,
                                           context: context,
                                         );
 
                                     if (success && mounted) {
+                                      storyProvider.refreshStories();
                                       context.go('/');
                                       uploadProvider.reset();
-                                      await storyProvider.fetchStories(
-                                        token: token,
-                                      );
                                     }
                                   }
                                 } else {
@@ -181,8 +183,28 @@ class _StoryFormPageState extends State<StoryFormPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  @override
   void dispose() {
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    await Geolocator.isLocationServiceEnabled();
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    setState(() {
+      currentPosition = position;
+    });
   }
 }

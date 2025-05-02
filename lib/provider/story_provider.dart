@@ -12,7 +12,7 @@ class StoryProvider with ChangeNotifier {
   final AuthProvider authProvider;
   Timer? _scrollDebounce;
   final StoryRepository _storyRepository = StoryRepository();
-  List<StoryModel> _stories = [];
+  final List<StoryModel> _stories = [];
   StoryModel? _selectedStory;
   bool _isLoading = false;
   bool _hasMore = true;
