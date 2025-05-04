@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:dicoding_story_flutter/screens/widgets/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 import 'package:geolocator/geolocator.dart';
@@ -11,6 +10,7 @@ import '../../core/localization/app_localizations.dart';
 import '../../data/model/story_model.dart';
 import '../../provider/auth_provider.dart';
 import '../../provider/story_provider.dart';
+import '../widgets/overlay_snackbar_helper.dart';
 import '../widgets/placemark_widget.dart';
 
 class StoryDetailLocationPage extends StatefulWidget {
@@ -105,7 +105,7 @@ class _StoryMapPageState extends State<StoryDetailLocationPage> {
       }
     } catch (e) {
       setState(() => isLoading = false);
-      SnackbarHelper.showError(context, 'Gagal mendapatkan lokasi: $e');
+      OverlaySnackbar.error(context, 'Gagal mendapatkan lokasi: $e');
     }
   }
 

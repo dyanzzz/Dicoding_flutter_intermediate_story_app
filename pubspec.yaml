@@ -27,6 +27,7 @@ dependencies:
   google_maps_flutter: ^2.2.3
   geolocator: ^9.0.2
   geocoding: ^3.0.0
+  location: ^6.0.2
   json_annotation: ^4.7.0
   freezed_annotation: ^2.2.0
 

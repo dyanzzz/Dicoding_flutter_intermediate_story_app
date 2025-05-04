@@ -36,18 +36,13 @@ class _HomePageState extends State<HomePage> {
     final authProvider = Provider.of<AuthProvider>(context);
     final storyProvider = Provider.of<StoryProvider>(context);
     final lang = AppLocalizations.of(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(lang!.translate('stories')),
         actions: [
           const LanguagePicker(),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              context.push('/add');
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
@@ -61,7 +56,40 @@ class _HomePageState extends State<HomePage> {
           storyProvider.isLoading && storyProvider.hasMore
               ? const Center(child: CircularProgressIndicator())
               : storyProvider.errorMessage.isNotEmpty
-              ? Center(child: Text(storyProvider.errorMessage))
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(storyProvider.errorMessage),
+                    ElevatedButton(
+                      onPressed: storyProvider.isLoading ? null : _loadStories,
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: Colors.teal[700],
+                        foregroundColor: Colors.white,
+                        elevation: 3,
+                        shadowColor: Colors.teal.withOpacity(0.5),
+                      ),
+                      child:
+                          storyProvider.isLoading
+                              ? const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              )
+                              : Text(
+                                lang.translate('refresh'),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                    ),
+                  ],
+                ),
+              )
               : RefreshIndicator(
                 onRefresh: () async {
                   storyProvider.refreshStories();
@@ -157,6 +185,20 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ),
+      floatingActionButton: Visibility(
+        child: FloatingActionButton.extended(
+          heroTag: 'add_story',
+          label: Text(lang.translate('add_story')),
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: Colors.white,
+          onPressed: () async {
+            context.push('/add');
+          },
+          icon: const Icon(Icons.add_box_rounded),
+          tooltip: lang.translate('add_story'),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

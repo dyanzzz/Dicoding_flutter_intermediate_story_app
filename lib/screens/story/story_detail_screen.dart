@@ -44,7 +44,16 @@ class _StoryDetailPageState extends State<StoryDetailPage> {
     final lang = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(lang!.translate('story_detail'))),
+      appBar: AppBar(
+        title: Text(lang!.translate('story_detail')),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            storyProvider.clearErrorMessage();
+            context.pop("/");
+          },
+        ),
+      ),
       body:
           storyProvider.isLoading
               ? const Center(child: CircularProgressIndicator())

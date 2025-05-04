@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/model/story_model.dart';
 import '../../data/repositories/story_repository.dart';
-import '../screens/widgets/snackbar_helper.dart';
+import '../screens/widgets/overlay_snackbar_helper.dart';
 import 'auth_provider.dart';
 
 class StoryProvider with ChangeNotifier {
@@ -84,7 +84,12 @@ class StoryProvider with ChangeNotifier {
     pageItems = 1;
     _stories.clear();
     _hasMore = true;
+    _errorMessage = "";
     await _fetchInitialStories();
+  }
+
+  Future<void> clearErrorMessage() async {
+    _errorMessage = "";
   }
 
   Future<void> fetchStoryDetail({
@@ -99,7 +104,7 @@ class StoryProvider with ChangeNotifier {
       _selectedStory = await _storyRepository.getStoryDetail(id, token);
       _errorMessage = '';
     } catch (e) {
-      SnackbarHelper.showError(context, e.toString());
+      OverlaySnackbar.error(context, e.toString());
       _errorMessage = e.toString();
     }
 

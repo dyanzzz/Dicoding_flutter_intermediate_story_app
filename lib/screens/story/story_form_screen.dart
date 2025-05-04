@@ -6,10 +6,13 @@ import 'package:provider/provider.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../core/theme/input_theme.dart';
+import '../../data/model/pick_location_result.dart';
 import '../../provider/auth_provider.dart';
 import '../../provider/story_provider.dart';
 import '../../provider/upload_provider.dart';
-import '../widgets/snackbar_helper.dart';
+import '../widgets/dialog_widget.dart';
+import '../widgets/overlay_snackbar_helper.dart';
+import '../widgets/pick_location_bottom_sheet.dart';
 
 class StoryFormPage extends StatefulWidget {
   const StoryFormPage({super.key});
@@ -20,6 +23,9 @@ class StoryFormPage extends StatefulWidget {
 
 class _StoryFormPageState extends State<StoryFormPage> {
   final _descriptionController = TextEditingController();
+  final _currentLocation = TextEditingController();
+  double? _selectedLatitude;
+  double? _selectedLongitude;
   final _formKey = GlobalKey<FormState>();
   Position? currentPosition;
 
@@ -102,7 +108,6 @@ class _StoryFormPageState extends State<StoryFormPage> {
                   const SizedBox(height: 24),
                   TextFormField(
                     controller: _descriptionController,
-
                     decoration: AppInputTheme.buildDecoration(
                       context: context,
                       label: lang.translate('description'),
@@ -112,6 +117,43 @@ class _StoryFormPageState extends State<StoryFormPage> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return lang.translate('required_description');
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: _currentLocation,
+                    onTap: () async {
+                      final dynamic result = await showBottomSheetDialog(
+                        context: context,
+                        child: const PickLocationBottomSheet(),
+                      );
+                      if (result == null) return;
+                      if (result is PickLocationResult) {
+                        _currentLocation.text =
+                            '${result.street}, ${result.address}';
+                        _selectedLatitude = result.latitude;
+                        _selectedLongitude = result.longitude;
+                        _formKey.currentState!.validate();
+                      }
+
+                      if (result is String && result.isNotEmpty) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context)
+                          ..removeCurrentSnackBar()
+                          ..showSnackBar(SnackBar(content: Text(result)));
+                      }
+                    },
+                    decoration: AppInputTheme.buildDecoration(
+                      context: context,
+                      label: lang.translate('location'),
+                      prefixIcon: Icons.map,
+                    ),
+                    readOnly: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return lang.translate('required_valid_location');
                       }
                       return null;
                     },
@@ -140,8 +182,8 @@ class _StoryFormPageState extends State<StoryFormPage> {
                                           token: token,
                                           description:
                                               _descriptionController.text,
-                                          lat: currentPosition?.latitude,
-                                          lon: currentPosition?.longitude,
+                                          lat: _selectedLatitude,
+                                          lon: _selectedLongitude,
                                           context: context,
                                         );
 
@@ -152,7 +194,7 @@ class _StoryFormPageState extends State<StoryFormPage> {
                                     }
                                   }
                                 } else {
-                                  SnackbarHelper.showError(
+                                  OverlaySnackbar.error(
                                     context,
                                     lang.translate('required_image'),
                                   );
@@ -191,6 +233,7 @@ class _StoryFormPageState extends State<StoryFormPage> {
   @override
   void dispose() {
     _descriptionController.dispose();
+    _currentLocation.dispose();
     super.dispose();
   }
 

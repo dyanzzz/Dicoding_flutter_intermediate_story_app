@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 import '../../data/repositories/story_repository.dart';
-import '../screens/widgets/snackbar_helper.dart';
+import '../screens/widgets/overlay_snackbar_helper.dart';
 
 class UploadProvider with ChangeNotifier {
   final StoryRepository _storyRepository = StoryRepository();
@@ -30,10 +30,7 @@ class UploadProvider with ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      SnackbarHelper.showError(
-        context,
-        'Failed to pick image: ${e.toString()}',
-      );
+      OverlaySnackbar.error(context, 'Failed to pick image: ${e.toString()}');
       _errorMessage = 'Failed to pick image: ${e.toString()}';
       notifyListeners();
     }
@@ -48,7 +45,7 @@ class UploadProvider with ChangeNotifier {
   }) async {
     if (_imageFile == null) {
       _errorMessage = '';
-      SnackbarHelper.showError(context, 'Please select an image first');
+      OverlaySnackbar.error(context, 'Please select an image first');
       notifyListeners();
       return false;
     }
@@ -73,7 +70,7 @@ class UploadProvider with ChangeNotifier {
       return success;
     } catch (e) {
       _isLoading = false;
-      SnackbarHelper.showError(context, e.toString());
+      OverlaySnackbar.error(context, e.toString());
       _errorMessage = e.toString();
       notifyListeners();
       return false;

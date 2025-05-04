@@ -72,7 +72,6 @@ class AppRouter {
                   key: state.pageKey,
                   child: StoryDetailPage(storyId: state.pathParameters['id']!),
                 ),
-            routes: [],
           ),
           GoRoute(
             path: 'detail/:id/map',
